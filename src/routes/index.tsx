@@ -205,14 +205,15 @@ function GroveSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {trees.map((t) => (
+          {trees.map((t, i) => (
             <article
               key={t.name}
-              className="group relative rounded-2xl border border-border bg-background/60 p-8 hover:border-primary/60 transition-colors overflow-hidden"
+              className="group relative rounded-3xl border border-border bg-background/60 p-8 overflow-hidden spring-hover hover:border-primary/60 animate-pop-in"
+              style={{ animationDelay: `${i * 120}ms` }}
             >
-              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="flex items-baseline justify-between">
-                <h3 className="font-display text-2xl">{t.name}</h3>
+                <h3 className="font-display text-3xl group-hover:animate-wiggle">{t.name}</h3>
                 <span className="text-xs uppercase tracking-widest text-primary">{t.age}</span>
               </div>
               <p className="mt-4 text-muted-foreground">{t.note}</p>
