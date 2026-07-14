@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 import heroTree from "@/assets/tree-hero.jpg";
 import midMountains from "@/assets/tree-mid.png";
 import foreGrass from "@/assets/tree-fore.png";
