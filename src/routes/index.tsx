@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { z } from "zod";
-import { toast } from "sonner";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { ContactForm } from "@/components/ContactForm";
+
 import heroTree from "@/assets/tree-hero.jpg";
 import midMountains from "@/assets/tree-mid.png";
 import foreGrass from "@/assets/tree-fore.png";
@@ -11,214 +11,234 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-function useScrollY() {
-  const [y, setY] = useState(0);
-  useEffect(() => {
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => setY(window.scrollY));
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-  return y;
-}
+function FloatingLeaves() {
+  const [leaves, setLeaves] = useState<{ id: number; left: number; delay: number; duration: number; size: number }[]>([]);
 
-function useReveal<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
-  const [shown, setShown] = useState(false);
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setShown(true)),
-      { threshold: 0.2 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    const newLeaves = Array.from({ length: 25 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      delay: Math.random() * 15,
+      duration: Math.random() * 15 + 10,
+      size: Math.random() * 1.5 + 0.5,
+    }));
+    setLeaves(newLeaves);
   }, []);
-  return { ref, shown };
+
+  return (
+    <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+      {leaves.map((leaf) => (
+        <motion.div
+          key={leaf.id}
+          className="absolute rounded-full bg-primary/40 blur-[1px]"
+          style={{
+            left: `${leaf.left}%`,
+            top: -20,
+            width: `${leaf.size * 6}px`,
+            height: `${leaf.size * 6}px`,
+          }}
+          animate={{
+            y: ["0vh", "120vh"],
+            x: [0, Math.random() * 150 - 75, Math.random() * 150 - 75],
+            rotate: [0, 360, 720],
+            opacity: [0, 1, 0.8, 0],
+          }}
+          transition={{
+            duration: leaf.duration,
+            repeat: Infinity,
+            delay: leaf.delay,
+            ease: "linear",
+          }}
+        />
+      ))}
+    </div>
+  );
 }
 
 function Index() {
-  const y = useScrollY();
+  const { scrollY } = useScroll();
+  const smoothScrollY = useSpring(scrollY, { damping: 25, stiffness: 120, mass: 0.2 });
 
   return (
     <main className="relative overflow-x-hidden bg-background text-foreground">
-      {/* NAV */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-5 flex items-center justify-between backdrop-blur-md bg-background/30 border-b border-border/40">
-        <a href="#top" className="flex items-center gap-2 font-display text-lg font-semibold tracking-tight">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-primary shadow-[0_0_20px] shadow-primary" />
-          Tree Clarence
-        </a>
-        <nav className="hidden md:flex gap-8 text-sm text-muted-foreground">
-          <a href="#story" className="hover:text-foreground transition-colors">Story</a>
-          <a href="#grove" className="hover:text-foreground transition-colors">The Grove</a>
-          <a href="#craft" className="hover:text-foreground transition-colors">Craft</a>
-          <a href="#visit" className="hover:text-foreground transition-colors">Visit</a>
-        </nav>
-        <a href="#visit" className="rounded-full bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity">
-          Plan a visit
-        </a>
-      </header>
-
-      {/* HERO — parallax layers */}
-      <section id="top" className="relative h-[100vh] w-full overflow-hidden bg-sky-gradient">
-        {/* Sky glow */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ transform: `translateY(${y * 0.15}px)` }}
-        >
-          <div className="absolute left-1/2 top-[18%] -translate-x-1/2 h-[420px] w-[420px] rounded-full bg-primary/40 blur-3xl animate-float-slow" />
-        </div>
-
-        {/* Distant mountains */}
-        <img
-          src={midMountains}
-          alt=""
-          aria-hidden
-          className="absolute bottom-0 left-0 w-full select-none pointer-events-none opacity-90"
-          style={{ transform: `translateY(${y * 0.35}px)` }}
-        />
-
-        {/* Hero tree */}
-        <img
-          src={heroTree}
-          alt="Ancient oak silhouette at sunrise"
-          width={1920}
-          height={1280}
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[110%] w-auto max-w-none object-cover object-bottom"
-          style={{ transform: `translate(-50%, ${y * 0.5}px)` }}
-        />
-
-        {/* Foreground grass */}
-        <img
-          src={foreGrass}
-          alt=""
-          aria-hidden
-          className="absolute bottom-[-40px] left-0 w-[130%] -ml-[15%] select-none pointer-events-none"
-          style={{ transform: `translateY(${y * -0.15}px)` }}
-        />
-
-        {/* Hero copy */}
-        <div
-          className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
-          style={{ transform: `translateY(${y * 0.25}px)`, opacity: Math.max(0, 1 - y / 600) }}
-        >
-          <p className="uppercase tracking-[0.4em] text-xs text-primary/90 mb-6">Est. 1892 — Clarence Vale</p>
-          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] max-w-4xl">
-            Where the <span className="text-gradient-sun italic">oldest trees</span><br />still speak.
-          </h1>
-          <p className="mt-6 max-w-xl text-base md:text-lg text-foreground/80">
-            Tree Clarence is a living archive of ancient canopies — tended, studied, and quietly guarded for the next two hundred years.
-          </p>
-          <a
-            href="#story"
-            className="mt-10 rounded-full border border-foreground/30 px-6 py-3 text-sm hover:bg-foreground/10 transition-colors"
-          >
-            Begin the walk ↓
-          </a>
-        </div>
-      </section>
-
-      {/* STORY */}
-      <StorySection />
-
-      {/* GROVE grid */}
-      <GroveSection />
-
-      {/* CRAFT parallax band */}
-      <CraftSection y={y} />
-
-      {/* VISIT */}
-      <VisitSection />
-
-      <footer className="border-t border-border/50 px-6 md:px-12 py-10 text-sm text-muted-foreground flex flex-col md:flex-row justify-between gap-4">
-        <span>© {new Date().getFullYear()} Tree Clarence Trust</span>
-        <span>Clarence Vale · Kept by hand, kept by time.</span>
-      </footer>
+      <HeroSection smoothScrollY={smoothScrollY} />
+      <ServicesSection />
+      <AboutSection />
+      <GallerySection />
+      <ContactSection />
     </main>
   );
 }
 
-function StorySection() {
-  const { ref, shown } = useReveal<HTMLDivElement>();
-  return (
-    <section id="story" className="relative py-32 md:py-44 px-6 md:px-12 bg-background">
-      <div
-        ref={ref}
-        className={`mx-auto max-w-3xl text-center transition-all duration-1000 ${shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-      >
-        <p className="uppercase tracking-[0.4em] text-xs text-primary mb-6">Chapter I</p>
-        <h2 className="font-display text-4xl md:text-6xl leading-tight mb-8">
-          A grove passed down<br />through four generations.
-        </h2>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          In 1892, botanist Elowen Clarence planted twelve saplings on a windswept ridge.
-          A century later, those trees form the spine of a private woodland home to more
-          than 40 rare species — many older than the country that surrounds them.
-        </p>
-      </div>
+function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
+  const yBg = useTransform(smoothScrollY, [0, 1000], [0, 150]);
+  const yMid = useTransform(smoothScrollY, [0, 1000], [0, 350]);
+  const yTree = useTransform(smoothScrollY, [0, 1000], [0, 500]);
+  const yFore = useTransform(smoothScrollY, [0, 1000], [0, -150]);
+  const yText = useTransform(smoothScrollY, [0, 1000], [0, 250]);
+  const opacityText = useTransform(smoothScrollY, [0, 600], [1, 0]);
 
-      <div className="mx-auto max-w-5xl mt-24 grid grid-cols-3 gap-8 text-center">
-        {[
-          { n: "134", l: "Years tended" },
-          { n: "42", l: "Rare species" },
-          { n: "9", l: "Trees over 300 years" },
-        ].map((s, i) => (
-          <div
-            key={s.l}
-            className={`transition-all duration-700 ${shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-            style={{ transitionDelay: `${200 + i * 150}ms` }}
-          >
-            <div className="font-display text-5xl md:text-6xl text-gradient-sun">{s.n}</div>
-            <div className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">{s.l}</div>
-          </div>
-        ))}
-      </div>
+  return (
+    <section id="top" className="relative h-[100vh] w-full overflow-hidden bg-sky-gradient">
+      <FloatingLeaves />
+
+      {/* Sky glow */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{ y: yBg }}
+      >
+        <div className="absolute left-1/2 top-[18%] -translate-x-1/2 h-[420px] w-[420px] rounded-full bg-primary/40 blur-3xl animate-float-slow" />
+      </motion.div>
+
+      {/* Distant mountains */}
+      <motion.img
+        src={midMountains}
+        alt=""
+        aria-hidden
+        className="absolute bottom-0 left-0 w-full select-none pointer-events-none opacity-90"
+        style={{ y: yMid }}
+      />
+
+      {/* Hero tree */}
+      <motion.img
+        src={heroTree}
+        alt="Ancient oak silhouette at sunrise"
+        width={1920}
+        height={1280}
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[110%] w-auto max-w-none object-cover object-bottom"
+        style={{ y: yTree, x: "-50%" }}
+      />
+
+      {/* Foreground grass */}
+      <motion.img
+        src={foreGrass}
+        alt=""
+        aria-hidden
+        className="absolute bottom-[-40px] left-0 w-[130%] -ml-[15%] select-none pointer-events-none"
+        style={{ y: yFore }}
+      />
+
+      {/* Hero copy */}
+      <motion.div
+        className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
+        style={{ y: yText, opacity: opacityText }}
+      >
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="uppercase tracking-[0.4em] text-xs text-primary/90 mb-6"
+        >
+          Quality Tree Services
+        </motion.p>
+        <motion.h1 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.4 }}
+          className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] max-w-4xl"
+        >
+          Buffalo's <span className="text-gradient-sun italic">Premier</span><br />Tree Experts.
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.6 }}
+          className="mt-6 max-w-xl text-base md:text-lg text-foreground/80"
+        >
+          Locally owned and operated tree service company committed to the highest standards of care, safety, and customer satisfaction.
+        </motion.p>
+        <motion.a
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
+          href="#services"
+          className="mt-10 rounded-full border border-foreground/30 px-6 py-3 text-sm hover:bg-foreground/10 transition-colors"
+        >
+          View Our Services ↓
+        </motion.a>
+      </motion.div>
     </section>
   );
 }
 
-function GroveSection() {
-  const trees = [
-    { name: "The Elder Oak", age: "412 yrs", note: "Planted before the vale had a name." },
-    { name: "Silverbark Beech", age: "228 yrs", note: "Its bark glows white under moonlight." },
-    { name: "Clarence Cedar", age: "301 yrs", note: "Elowen's first sapling, still standing." },
-    { name: "Whispering Ash", age: "184 yrs", note: "Named for the sound its leaves make." },
-  ];
-  return (
-    <section id="grove" className="relative px-6 md:px-12 py-32 bg-card/50 border-y border-border/40">
-      <div className="mx-auto max-w-6xl">
-        <div className="flex items-end justify-between mb-16 flex-wrap gap-6">
-          <div>
-            <p className="uppercase tracking-[0.4em] text-xs text-primary mb-4">Chapter II</p>
-            <h2 className="font-display text-4xl md:text-5xl max-w-xl">Meet the residents of the grove.</h2>
-          </div>
-          <a href="#visit" className="text-sm underline underline-offset-4 text-muted-foreground hover:text-foreground">
-            Book a guided walk →
-          </a>
-        </div>
+const services = [
+  {
+    title: "Tree Trimming & Pruning",
+    icon: "✂️",
+    desc: "Expert shaping and pruning to promote healthy growth, enhance curb appeal, and maintain the beauty of your landscape.",
+  },
+  {
+    title: "Tree Removal",
+    icon: "🪓",
+    desc: "Safe and efficient removal of hazardous, dead, or unwanted trees. We handle all sizes with industry-leading equipment.",
+  },
+  {
+    title: "Stump Grinding",
+    icon: "⚙️",
+    desc: "Complete stump removal that eliminates tripping hazards and frees your yard for replanting, landscaping, or lawn expansion.",
+  },
+  {
+    title: "Emergency Tree Service",
+    icon: "🚨",
+    desc: "Round-the-clock emergency response for storm-damaged or fallen trees. We're ready to protect your property at any hour.",
+    badge: "24/7",
+  },
+];
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {trees.map((t, i) => (
-            <article
-              key={t.name}
-              className="group relative rounded-3xl border border-border bg-background/60 p-8 overflow-hidden spring-hover hover:border-primary/60 animate-pop-in"
-              style={{ animationDelay: `${i * 120}ms` }}
+function ServicesSection() {
+  return (
+    <section id="services" className="relative py-32 px-6 md:px-12 text-foreground">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <p className="uppercase tracking-[0.4em] text-xs text-primary mb-4">What We Do</p>
+          <h2 className="font-display text-4xl md:text-6xl font-semibold mb-6">
+            Our <span className="text-gradient-sun italic">Services</span>
+          </h2>
+          <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
+            From routine maintenance to emergency response, we handle all your tree care needs with expertise and professionalism.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {services.map((s, i) => (
+            <motion.article
+              key={s.title}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              className="group relative rounded-3xl border border-border bg-card/40 p-8 overflow-hidden hover:border-primary/60 transition-colors"
             >
-              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="flex items-baseline justify-between">
-                <h3 className="font-display text-3xl group-hover:animate-wiggle">{t.name}</h3>
-                <span className="text-xs uppercase tracking-widest text-primary">{t.age}</span>
+              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="flex justify-between items-start mb-6">
+                <div className="text-4xl bg-primary/10 w-16 h-16 flex items-center justify-center rounded-2xl">
+                  {s.icon}
+                </div>
+                {s.badge && (
+                  <span className="text-xs font-bold uppercase tracking-wider bg-destructive/10 text-destructive px-3 py-1 rounded-full">
+                    {s.badge}
+                  </span>
+                )}
               </div>
-              <p className="mt-4 text-muted-foreground">{t.note}</p>
-            </article>
+              
+              <h3 className="font-display text-3xl mb-4">{s.title}</h3>
+              <p className="text-muted-foreground leading-relaxed mb-8">{s.desc}</p>
+              
+              <a
+                href="#contact"
+                className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                Get a Quote <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+              </a>
+            </motion.article>
           ))}
         </div>
       </div>
@@ -226,200 +246,224 @@ function GroveSection() {
   );
 }
 
-function CraftSection({ y }: { y: number }) {
+function AboutSection() {
   return (
-    <section id="craft" className="relative h-[80vh] overflow-hidden flex items-center justify-center">
-      <div
-        className="absolute inset-0 scale-110"
-        style={{
-          backgroundImage: `url(${heroTree})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          transform: `translateY(${(y - 1600) * 0.2}px) scale(1.15)`,
-          filter: "brightness(0.55) contrast(1.05)",
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/30 to-background" />
-      <div className="relative z-10 max-w-3xl text-center px-6">
-        <p className="uppercase tracking-[0.4em] text-xs text-primary mb-6">Chapter III</p>
-        <h2 className="font-display text-4xl md:text-6xl leading-tight">
-          Slow craft. <span className="italic text-gradient-sun">Sharp tools.</span>
-        </h2>
-        <p className="mt-6 text-lg text-foreground/85">
-          Every pruning cut is planned a decade in advance. Every wound is sealed with beeswax
-          harvested from the grove's own hives. We work at the speed of the tree, not the calendar.
-        </p>
-      </div>
-    </section>
-  );
-}
+    <section id="about" className="relative py-32 px-6 md:px-12 bg-card/30 border-y border-border/40">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <p className="uppercase tracking-[0.4em] text-xs text-primary mb-4">About Us</p>
+            <h2 className="font-display text-4xl md:text-5xl font-semibold mb-8 leading-tight">
+              Buffalo's <span className="text-gradient-sun italic">Premier</span> Tree Experts
+            </h2>
+            
+            <div className="space-y-6 text-lg text-muted-foreground mb-10">
+              <p>
+                We are a locally owned and operated tree service company committed to the highest standards of care, safety, and customer satisfaction in Buffalo, NY and surrounding Western New York communities.
+              </p>
+              <p>
+                Our certified arborists bring years of hands-on experience to every job — from routine trimming to complex removals. We use state-of-the-art equipment and follow all industry safety protocols to protect your property and our crew.
+              </p>
+            </div>
 
-function VisitSection() {
-  const { ref, shown } = useReveal<HTMLDivElement>();
-  return (
-    <section id="visit" className="px-6 md:px-12 py-32 bg-background">
-      <div
-        ref={ref}
-        className={`mx-auto max-w-4xl rounded-3xl border border-border bg-card p-10 md:p-16 text-center transition-all duration-1000 ${shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-      >
-        <p className="uppercase tracking-[0.4em] text-xs text-primary mb-4">Chapter IV</p>
-        <h2 className="font-display text-4xl md:text-5xl mb-6">Walk the grove with us.</h2>
-        <p className="text-muted-foreground max-w-xl mx-auto mb-10">
-          Twelve visitors a day. Two hours on foot. One arborist as your guide. Reservations open the first
-          Monday of each season.
-        </p>
-        <ContactForm />
-      </div>
-    </section>
-  );
-}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
+              {[
+                { title: "Licensed & Insured", icon: "✅" },
+                { title: "Certified Arborists", icon: "🏆" },
+                { title: "24/7 Emergency", icon: "⚡" },
+                { title: "Complete Cleanup", icon: "🌿" },
+              ].map((item, i) => (
+                <motion.div 
+                  key={item.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 + (i * 0.1) }}
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-card border border-border"
+                >
+                  <span className="text-2xl">{item.icon}</span>
+                  <span className="font-medium text-sm">{item.title}</span>
+                </motion.div>
+              ))}
+            </div>
 
-const contactSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, { message: "Please tell us your name." })
-    .max(100, { message: "Name must be less than 100 characters." }),
-  email: z
-    .string()
-    .trim()
-    .email({ message: "Please enter a valid email address." })
-    .max(255, { message: "Email must be less than 255 characters." }),
-  message: z
-    .string()
-    .trim()
-    .min(10, { message: "Message must be at least 10 characters." })
-    .max(1000, { message: "Message must be less than 1000 characters." }),
-});
+            <a
+              href="#contact"
+              className="inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground px-8 py-3 text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              Get Started Today
+            </a>
+          </motion.div>
 
-type ContactValues = z.infer<typeof contactSchema>;
-type ContactErrors = Partial<Record<keyof ContactValues, string>>;
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative"
+          >
+            <div className="aspect-[4/5] rounded-3xl overflow-hidden border border-border/50 relative z-10 bg-card">
+              <img 
+                src="https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+                alt="Arborist at work" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Decorative blob behind image */}
+            <div className="absolute -inset-4 rounded-3xl bg-primary/20 blur-2xl z-0" />
+            
+            {/* Badge overlay */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="absolute -bottom-8 -left-8 bg-card border border-border rounded-2xl p-6 shadow-xl z-20"
+            >
+              <span className="block font-display text-5xl text-primary font-bold mb-1">15+</span>
+              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Years of<br/>Excellence</span>
+            </motion.div>
+          </motion.div>
 
-function ContactForm() {
-  const [values, setValues] = useState<ContactValues>({ name: "", email: "", message: "" });
-  const [errors, setErrors] = useState<ContactErrors>({});
-  const [submitting, setSubmitting] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  const update = (key: keyof ContactValues) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setValues((v) => ({ ...v, [key]: e.target.value }));
-    if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
-  };
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const parsed = contactSchema.safeParse(values);
-    if (!parsed.success) {
-      const fieldErrors: ContactErrors = {};
-      for (const issue of parsed.error.issues) {
-        const k = issue.path[0] as keyof ContactValues;
-        if (!fieldErrors[k]) fieldErrors[k] = issue.message;
-      }
-      setErrors(fieldErrors);
-      toast.error("Please fix the highlighted fields.");
-      return;
-    }
-    setSubmitting(true);
-    // Simulate submission
-    await new Promise((r) => setTimeout(r, 700));
-    setSubmitting(false);
-    setSent(true);
-    setValues({ name: "", email: "", message: "" });
-    toast.success("Message sent", {
-      description: "We'll be in touch within a few days.",
-    });
-  };
-
-  if (sent) {
-    return (
-      <div className="mx-auto max-w-md rounded-2xl border border-primary/40 bg-primary/5 p-8 text-center animate-reveal">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
         </div>
-        <h3 className="font-display text-2xl mb-2">Message received.</h3>
-        <p className="text-sm text-muted-foreground mb-6">
-          Thanks for reaching out. An arborist will reply from the grove within a few days.
-        </p>
-        <button
-          type="button"
-          onClick={() => setSent(false)}
-          className="text-sm underline underline-offset-4 text-muted-foreground hover:text-foreground"
+      </div>
+    </section>
+  );
+}
+
+const galleryImages = [
+  { src: heroTree, title: "Tree Care Excellence", span: "col-span-1 md:col-span-2 row-span-2" },
+  { src: "https://images.unsplash.com/photo-1593007622835-188cc06da0ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", title: "Precision Trimming", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", title: "Safe Removal", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1588693895085-f5e976693a12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", title: "Stump Grinding", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", title: "Emergency Response", span: "col-span-1 md:col-span-2" },
+];
+
+function GallerySection() {
+  return (
+    <section id="gallery" className="relative py-32 px-6 md:px-12 text-foreground">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
         >
-          Send another message
-        </button>
+          <p className="uppercase tracking-[0.4em] text-xs text-primary mb-4">Our Work</p>
+          <h2 className="font-display text-4xl md:text-6xl font-semibold mb-6">
+            Project <span className="text-gradient-sun italic">Gallery</span>
+          </h2>
+          <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
+            See the quality and craftsmanship we bring to every project we complete in the Buffalo area.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[250px]">
+          {galleryImages.map((img, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.15 }}
+              className={`group relative rounded-2xl overflow-hidden cursor-pointer ${img.span}`}
+            >
+              <img 
+                src={img.src} 
+                alt={img.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                <span className="text-lg font-medium text-foreground translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                  {img.title}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
-    );
-  }
+    </section>
+  );
+}
 
-  const inputBase =
-    "w-full rounded-xl bg-background border px-4 py-3 text-sm outline-none transition-colors focus:border-primary placeholder:text-muted-foreground/60";
-
+function ContactSection() {
   return (
-    <form onSubmit={onSubmit} noValidate className="mx-auto max-w-xl text-left space-y-5">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="name" className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
-            Name
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={values.name}
-            onChange={update("name")}
-            maxLength={100}
-            aria-invalid={!!errors.name}
-            className={`${inputBase} ${errors.name ? "border-destructive" : "border-border"}`}
-            placeholder="Elowen Clarence"
-          />
-          {errors.name && <p className="mt-1.5 text-xs text-destructive">{errors.name}</p>}
-        </div>
-        <div>
-          <label htmlFor="email" className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={values.email}
-            onChange={update("email")}
-            maxLength={255}
-            aria-invalid={!!errors.email}
-            className={`${inputBase} ${errors.email ? "border-destructive" : "border-border"}`}
-            placeholder="you@grove.com"
-          />
-          {errors.email && <p className="mt-1.5 text-xs text-destructive">{errors.email}</p>}
+    <section id="contact" className="relative py-32 px-6 md:px-12 bg-card/20 border-t border-border/40 text-foreground">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <p className="uppercase tracking-[0.4em] text-xs text-primary mb-4">Get In Touch</p>
+          <h2 className="font-display text-4xl md:text-6xl font-semibold mb-6">
+            Request a <span className="text-gradient-sun italic">Free Quote</span>
+          </h2>
+          <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
+            Ready to transform your property? Contact us today for a free, no-obligation estimate.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-12 items-start">
+          
+          {/* Contact Info */}
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col gap-6"
+          >
+            <div className="flex gap-4 items-start bg-card/50 border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors">
+              <span className="text-3xl bg-primary/10 w-12 h-12 flex items-center justify-center rounded-xl shrink-0">📞</span>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-primary mb-1">Call Us Anytime</p>
+                <a href="tel:7162749576" className="text-2xl font-semibold hover:text-primary transition-colors block mb-1">716-274-9576</a>
+                <p className="text-sm text-muted-foreground">Available 24/7 for emergencies</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start bg-card/50 border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors">
+              <span className="text-3xl bg-primary/10 w-12 h-12 flex items-center justify-center rounded-xl shrink-0">📍</span>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-primary mb-1">Our Location</p>
+                <address className="not-italic text-lg mb-1">257 Busti Ave<br />Buffalo, NY 14201<br />United States</address>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start bg-card/50 border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors">
+              <span className="text-3xl bg-primary/10 w-12 h-12 flex items-center justify-center rounded-xl shrink-0">🕐</span>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-primary mb-1">Business Hours</p>
+                <p className="text-lg mb-1">Mon – Sat: 7:00 AM – 7:00 PM</p>
+                <p className="text-sm text-muted-foreground">Emergency: 24/7</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="bg-card border border-border rounded-3xl p-8 md:p-12 shadow-sm"
+          >
+            <ContactForm />
+          </motion.div>
+
         </div>
       </div>
-      <div>
-        <label htmlFor="message" className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
-          Message
-        </label>
-        <textarea
-          id="message"
-          value={values.message}
-          onChange={update("message")}
-          maxLength={1000}
-          rows={5}
-          aria-invalid={!!errors.message}
-          className={`${inputBase} resize-none ${errors.message ? "border-destructive" : "border-border"}`}
-          placeholder="Tell us when you'd like to visit, or which trees you'd love to meet…"
-        />
-        <div className="mt-1.5 flex justify-between text-xs">
-          <span className="text-destructive">{errors.message ?? ""}</span>
-          <span className="text-muted-foreground/70">{values.message.length}/1000</span>
-        </div>
-      </div>
-      <button
-        type="submit"
-        disabled={submitting}
-        className="w-full sm:w-auto rounded-full bg-primary text-primary-foreground px-8 py-3 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        {submitting ? "Sending…" : "Send message"}
-      </button>
-    </form>
+    </section>
   );
 }
