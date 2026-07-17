@@ -42,19 +42,24 @@ export function Header() {
   const [active, setActive] = useState("top");
 
   useEffect(() => {
-    const onScroll = () => {
-      let current = NAV_ITEMS[0].id;
-      for (const item of NAV_ITEMS) {
-        const el = document.getElementById(item.id);
-        if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.4) {
-          current = item.id;
-        }
-      }
-      setActive(current);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    const sections = NAV_ITEMS.map((item) => document.getElementById(item.id)).filter(
+      (el): el is HTMLElement => el !== null,
+    );
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (visible.length === 0) return;
+        const topMost = visible.reduce((a, b) =>
+          a.boundingClientRect.top < b.boundingClientRect.top ? a : b,
+        );
+        setActive(topMost.target.id);
+      },
+      { rootMargin: "-40% 0px -59% 0px", threshold: 0 },
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   const activeIndex = Math.max(

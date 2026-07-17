@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { GHLContactForm } from "@/components/GHLContactForm";
 
-import heroTree from "@/assets/tree-hero.jpg?w=1920&format=webp&quality=80&url";
-import heroTreeSmall from "@/assets/tree-hero.jpg?w=960&format=webp&quality=75&url";
+// Hero image lives in /public so the URL is stable for the <link rel="preload"> in __root.tsx
+const heroTree = "/tree-hero.jpg";
 import midMountains from "@/assets/tree-mid.png?w=1920&format=webp&quality=80&url";
 import midMountainsSmall from "@/assets/tree-mid.png?w=960&format=webp&quality=75&url";
 import foreGrass from "@/assets/tree-fore.png?w=1920&format=webp&quality=80&url";
@@ -108,17 +108,15 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
         style={{ y: yMid }}
       />
 
-      {/* Hero tree */}
+      {/* Hero tree — LCP image. fetchPriority makes React's auto-generated
+          <link rel="preload"> (and the request itself) high priority. */}
       <motion.img
         src={heroTree}
-        srcSet={`${heroTreeSmall} 960w, ${heroTree} 1920w`}
-        sizes="100vw"
         alt="Ancient oak silhouette at sunrise"
         width={1920}
         height={1280}
-        // @ts-expect-error fetchpriority is valid HTML but not yet in React types
-        fetchpriority="high"
         decoding="async"
+        fetchPriority="high"
         className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[110%] w-auto max-w-none object-cover object-bottom"
         style={{ y: yTree, x: "-50%" }}
       />
