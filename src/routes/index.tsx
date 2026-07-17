@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { ContactForm } from "@/components/ContactForm";
+import { GHLContactForm } from "@/components/GHLContactForm";
 
 import heroTree from "@/assets/tree-hero.jpg";
 import midMountains from "@/assets/tree-mid.png";
@@ -209,12 +209,12 @@ function ServicesSection() {
           {services.map((s, i) => (
             <motion.article
               key={s.title}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              whileHover={{ scale: 1.02 }}
-              className="group relative rounded-3xl border border-border bg-card/40 p-8 overflow-hidden hover:border-primary/60 transition-colors"
+              className="group glass-green animate-glass-fly relative rounded-3xl p-8 overflow-hidden hover:border-primary/60 transition-colors"
+              style={{ animationDelay: `${i * 0.8}s` }}
             >
               <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
@@ -279,13 +279,14 @@ function AboutSection() {
                 { title: "24/7 Emergency", icon: "⚡" },
                 { title: "Complete Cleanup", icon: "🌿" },
               ].map((item, i) => (
-                <motion.div 
+                <motion.div
                   key={item.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.2 + (i * 0.1) }}
-                  className="flex items-center gap-4 p-4 rounded-2xl bg-card border border-border"
+                  className="glass-green animate-glass-fly flex items-center gap-4 p-4 rounded-2xl"
+                  style={{ animationDelay: `${i * 0.6}s` }}
                 >
                   <span className="text-2xl">{item.icon}</span>
                   <span className="font-medium text-sm">{item.title}</span>
@@ -320,12 +321,12 @@ function AboutSection() {
             <div className="absolute -inset-4 rounded-3xl bg-primary/20 blur-2xl z-0" />
             
             {/* Badge overlay */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="absolute -bottom-8 -left-8 bg-card border border-border rounded-2xl p-6 shadow-xl z-20"
+              className="glass-green animate-glass-fly absolute -bottom-8 -left-8 rounded-2xl p-6 z-20"
             >
               <span className="block font-display text-5xl text-primary font-bold mb-1">15+</span>
               <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Years of<br/>Excellence</span>
@@ -424,24 +425,30 @@ function ContactSection() {
             transition={{ duration: 0.6 }}
             className="flex flex-col gap-6"
           >
-            <div className="flex gap-4 items-start bg-card/50 border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors">
+            <div className="glass-green animate-glass-fly flex gap-4 items-start rounded-2xl p-6 hover:border-primary/50 transition-colors">
               <span className="text-3xl bg-primary/10 w-12 h-12 flex items-center justify-center rounded-xl shrink-0">📞</span>
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-primary mb-1">Call Us Anytime</p>
-                <a href="tel:7162749576" className="text-2xl font-semibold hover:text-primary transition-colors block mb-1">716-274-9576</a>
+                <a href="tel:7167108864" className="text-2xl font-semibold hover:text-primary transition-colors block mb-1">716-710-8864</a>
                 <p className="text-sm text-muted-foreground">Available 24/7 for emergencies</p>
               </div>
             </div>
 
-            <div className="flex gap-4 items-start bg-card/50 border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors">
+            <div
+              className="glass-green animate-glass-fly flex gap-4 items-start rounded-2xl p-6 hover:border-primary/50 transition-colors"
+              style={{ animationDelay: "0.7s" }}
+            >
               <span className="text-3xl bg-primary/10 w-12 h-12 flex items-center justify-center rounded-xl shrink-0">📍</span>
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-primary mb-1">Our Location</p>
-                <address className="not-italic text-lg mb-1">257 Busti Ave<br />Buffalo, NY 14201<br />United States</address>
+                <address className="not-italic text-lg mb-1">9950 County Rd<br />Clarence Center, NY 14032<br />United States</address>
               </div>
             </div>
 
-            <div className="flex gap-4 items-start bg-card/50 border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors">
+            <div
+              className="glass-green animate-glass-fly flex gap-4 items-start rounded-2xl p-6 hover:border-primary/50 transition-colors"
+              style={{ animationDelay: "1.4s" }}
+            >
               <span className="text-3xl bg-primary/10 w-12 h-12 flex items-center justify-center rounded-xl shrink-0">🕐</span>
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-primary mb-1">Business Hours</p>
@@ -453,13 +460,14 @@ function ContactSection() {
 
           {/* Contact Form */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-card border border-border rounded-3xl p-8 md:p-12 shadow-sm"
+            className="glass-green animate-glass-fly rounded-3xl p-4 md:p-6"
+            style={{ animationDelay: "0.4s", animationDuration: "8s" }}
           >
-            <ContactForm />
+            <GHLContactForm />
           </motion.div>
 
         </div>

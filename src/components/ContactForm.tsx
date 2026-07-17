@@ -14,6 +14,10 @@ const contactSchema = z.object({
     .trim()
     .email({ message: "Please enter a valid email address." })
     .max(255, { message: "Email must be less than 255 characters." }),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+?[0-9() .-]{10,20}$/, { message: "Please enter a valid phone number." }),
   message: z
     .string()
     .trim()
@@ -25,8 +29,9 @@ type ContactValues = z.infer<typeof contactSchema>;
 type ContactErrors = Partial<Record<keyof ContactValues, string>>;
 
 export function ContactForm() {
-  const [values, setValues] = useState<ContactValues>({ name: "", email: "", message: "" });
+  const [values, setValues] = useState<ContactValues>({ name: "", email: "", phone: "", message: "" });
   const [errors, setErrors] = useState<ContactErrors>({});
+  const [smsConsent, setSmsConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -55,7 +60,8 @@ export function ContactForm() {
     await new Promise((r) => setTimeout(r, 700));
     setSubmitting(false);
     setSent(true);
-    setValues({ name: "", email: "", message: "" });
+    setValues({ name: "", email: "", phone: "", message: "" });
+    setSmsConsent(false);
     toast.success("Message sent", {
       description: "We'll be in touch within a few days.",
     });
@@ -128,6 +134,22 @@ export function ContactForm() {
         </div>
       </div>
       <div>
+        <label htmlFor="phone" className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+          Phone Number
+        </label>
+        <input
+          id="phone"
+          type="tel"
+          value={values.phone}
+          onChange={update("phone")}
+          maxLength={20}
+          aria-invalid={!!errors.phone}
+          className={`${inputBase} ${errors.phone ? "border-destructive" : "border-border"}`}
+          placeholder="(716) 555-0123"
+        />
+        {errors.phone && <p className="mt-1.5 text-xs text-destructive">{errors.phone}</p>}
+      </div>
+      <div>
         <label htmlFor="message" className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
           Message
         </label>
@@ -146,6 +168,28 @@ export function ContactForm() {
           <span className="text-muted-foreground/70">{values.message.length}/1000</span>
         </div>
       </div>
+      <label className="flex items-start gap-3 text-xs text-muted-foreground leading-relaxed cursor-pointer">
+        <input
+          type="checkbox"
+          checked={smsConsent}
+          onChange={(e) => setSmsConsent(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+        />
+        <span>
+          By checking this box, I agree to receive SMS text messages from Tree Clarence
+          (KD Associates Buffalo INC) regarding quotes, appointments, and service updates.
+          Message frequency varies. Message and data rates may apply. Reply STOP to opt out
+          or HELP for help. See our{" "}
+          <a href="/privacy-policy" className="underline underline-offset-2 hover:text-foreground">
+            Privacy Policy
+          </a>{" "}
+          and{" "}
+          <a href="/terms" className="underline underline-offset-2 hover:text-foreground">
+            Terms of Service
+          </a>
+          . Consent is not a condition of purchase.
+        </span>
+      </label>
       <button
         type="submit"
         disabled={submitting}
