@@ -127,23 +127,23 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="uppercase tracking-[0.4em] text-xs text-primary/90 mb-6"
+          className="uppercase tracking-[0.4em] text-xs text-[oklch(0.88_0.08_140)] mb-6"
         >
           Quality Tree Services
         </motion.p>
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4 }}
-          className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] max-w-4xl"
+          className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] max-w-4xl text-[oklch(0.97_0.015_130)] drop-shadow-md"
         >
           Buffalo's <span className="text-gradient-sun italic">Premier</span><br />Tree Experts.
         </motion.h1>
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6 }}
-          className="mt-6 max-w-xl text-base md:text-lg text-foreground/80"
+          className="mt-6 max-w-xl text-base md:text-lg text-[oklch(0.97_0.015_130)]/85 drop-shadow"
         >
           Locally owned and operated tree service company committed to the highest standards of care, safety, and customer satisfaction.
         </motion.p>
@@ -152,7 +152,7 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.8 }}
           href="#services"
-          className="mt-10 rounded-full border border-foreground/30 px-6 py-3 text-sm hover:bg-foreground/10 transition-colors"
+          className="mt-10 rounded-full border border-white/40 bg-black/10 px-6 py-3 text-sm text-[oklch(0.97_0.015_130)] backdrop-blur-sm hover:bg-white/15 transition-colors"
         >
           View Our Services ↓
         </motion.a>

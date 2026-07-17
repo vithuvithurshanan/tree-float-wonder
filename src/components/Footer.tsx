@@ -18,7 +18,7 @@ const SERVICES = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/50 bg-background px-6 md:px-12 pt-16 pb-28 md:pb-10 text-sm text-muted-foreground">
+    <footer className="border-t border-primary/20 bg-gradient-to-b from-card/40 to-card/80 px-6 md:px-12 pt-16 pb-28 md:pb-10 text-sm text-muted-foreground">
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
