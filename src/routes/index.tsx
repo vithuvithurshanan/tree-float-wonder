@@ -3,9 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { GHLContactForm } from "@/components/GHLContactForm";
 
-import heroTree from "@/assets/tree-hero.jpg";
-import midMountains from "@/assets/tree-mid.png";
-import foreGrass from "@/assets/tree-fore.png";
+import heroTree from "@/assets/tree-hero.jpg?w=1920&format=webp&quality=80&url";
+import heroTreeSmall from "@/assets/tree-hero.jpg?w=960&format=webp&quality=75&url";
+import midMountains from "@/assets/tree-mid.png?w=1920&format=webp&quality=80&url";
+import midMountainsSmall from "@/assets/tree-mid.png?w=960&format=webp&quality=75&url";
+import foreGrass from "@/assets/tree-fore.png?w=1920&format=webp&quality=80&url";
+import foreGrassSmall from "@/assets/tree-fore.png?w=960&format=webp&quality=75&url";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -93,8 +96,14 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
       {/* Distant mountains */}
       <motion.img
         src={midMountains}
+        srcSet={`${midMountainsSmall} 960w, ${midMountains} 1920w`}
+        sizes="100vw"
         alt=""
         aria-hidden
+        width={1920}
+        height={1080}
+        decoding="async"
+        loading="eager"
         className="absolute bottom-0 left-0 w-full select-none pointer-events-none opacity-90"
         style={{ y: yMid }}
       />
@@ -102,9 +111,14 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
       {/* Hero tree */}
       <motion.img
         src={heroTree}
+        srcSet={`${heroTreeSmall} 960w, ${heroTree} 1920w`}
+        sizes="100vw"
         alt="Ancient oak silhouette at sunrise"
         width={1920}
         height={1280}
+        // @ts-expect-error fetchpriority is valid HTML but not yet in React types
+        fetchpriority="high"
+        decoding="async"
         className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[110%] w-auto max-w-none object-cover object-bottom"
         style={{ y: yTree, x: "-50%" }}
       />
@@ -112,8 +126,14 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
       {/* Foreground grass */}
       <motion.img
         src={foreGrass}
+        srcSet={`${foreGrassSmall} 960w, ${foreGrass} 1920w`}
+        sizes="100vw"
         alt=""
         aria-hidden
+        width={1920}
+        height={600}
+        decoding="async"
+        loading="eager"
         className="absolute bottom-[-40px] left-0 w-[130%] -ml-[15%] select-none pointer-events-none"
         style={{ y: yFore }}
       />
@@ -311,8 +331,14 @@ function AboutSection() {
           >
             <div className="aspect-[4/5] rounded-3xl overflow-hidden border border-border/50 relative z-10 bg-card">
               <img 
-                src="https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+                src="https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=75&fm=webp" 
+                srcSet="https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp 600w, https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=75&fm=webp 800w"
+                sizes="(max-width: 768px) 100vw, 50vw"
                 alt="Arborist at work" 
+                width={800}
+                height={1000}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -326,7 +352,7 @@ function AboutSection() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="glass-green animate-glass-fly absolute -bottom-8 -left-8 rounded-2xl p-6 z-20"
+              className="glass-green-solid animate-glass-fly absolute -bottom-8 -left-8 rounded-2xl p-6 z-20"
             >
               <span className="block font-display text-5xl text-primary font-bold mb-1">15+</span>
               <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Years of<br/>Excellence</span>
@@ -341,10 +367,10 @@ function AboutSection() {
 
 const galleryImages = [
   { src: heroTree, title: "Tree Care Excellence", span: "col-span-1 md:col-span-2 row-span-2" },
-  { src: "https://images.unsplash.com/photo-1593007622835-188cc06da0ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", title: "Precision Trimming", span: "col-span-1" },
-  { src: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", title: "Safe Removal", span: "col-span-1" },
-  { src: "https://images.unsplash.com/photo-1588693895085-f5e976693a12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", title: "Stump Grinding", span: "col-span-1" },
-  { src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", title: "Emergency Response", span: "col-span-1 md:col-span-2" },
+  { src: "https://images.unsplash.com/photo-1593007622835-188cc06da0ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Precision Trimming", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Safe Removal", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1588693895085-f5e976693a12?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Stump Grinding", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=75&fm=webp", title: "Emergency Response", span: "col-span-1 md:col-span-2" },
 ];
 
 function GallerySection() {
@@ -380,6 +406,8 @@ function GallerySection() {
               <img 
                 src={img.src} 
                 alt={img.title}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">

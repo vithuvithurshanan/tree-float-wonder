@@ -165,6 +165,22 @@
     inset 0 1px 0 0 color-mix(in oklab, var(--color-foreground) 12%, transparent);
 }
 
+/* Higher-opacity variant for glass panels that sit on top of photos, where
+   the standard translucent glass-green would pick up the image behind it. */
+@utility glass-green-solid {
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--color-primary) 18%, var(--color-card)),
+    var(--color-card)
+  );
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid color-mix(in oklab, var(--color-primary) 28%, transparent);
+  box-shadow:
+    0 24px 50px -20px oklch(0.18 0.05 150 / 0.4),
+    inset 0 1px 0 0 color-mix(in oklab, var(--color-foreground) 12%, transparent);
+}
+
 @keyframes glass-fly {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }

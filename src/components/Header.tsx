@@ -64,57 +64,67 @@ export function Header() {
   const ActiveIcon = NAV_ITEMS[activeIndex].icon;
 
   return (
-    <header className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 md:bottom-auto md:top-9">
-      <div className="flex items-center gap-3">
-        <a
-          href="/#top"
-          aria-label="Tree Clarence home"
-          className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/30 bg-white shadow-xl shadow-black/10"
-        >
-          <img src={logo} alt="Tree Clarence logo" className="h-full w-full object-cover scale-125" />
-        </a>
-        <div
-          className="nav-frame relative"
-          style={{ "--nav-index": activeIndex } as CSSProperties}
-        >
-          <nav className="nav-notch flex items-end rounded-full border border-border/30 bg-card/40 px-2 shadow-xl shadow-black/10 backdrop-blur-xl">
-            {NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const isActive = active === item.id;
-              return (
-                <a
-                  key={item.id}
-                  href={`#${item.id}`}
-                  onClick={() => setActive(item.id)}
-                  aria-current={isActive ? "page" : undefined}
-                  className="relative flex h-16 w-16 flex-col items-center justify-end pb-2 md:w-28"
-                >
-                  <span
-                    className={cn(
-                      "mb-1 text-muted-foreground transition-opacity duration-300",
-                      isActive && "opacity-0",
-                    )}
-                  >
-                    <Icon className="h-5 w-5" strokeWidth={1.7} />
-                  </span>
-                  <span
-                    className={cn(
-                      "text-[11px] tracking-wide transition-colors duration-300",
-                      isActive ? "font-semibold text-foreground" : "text-muted-foreground",
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                </a>
-              );
-            })}
-          </nav>
-          <span className="nav-bubble pointer-events-none absolute top-0 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-border/30 bg-card/50 text-foreground shadow-lg shadow-black/20 backdrop-blur-xl">
-            <ActiveIcon className="h-5 w-5" strokeWidth={2.2} />
-          </span>
-        </div>
-        <ThemeToggle />
-      </div>
-    </header>
+    <>
+      <a
+        href="/#top"
+        aria-label="Tree Clarence home"
+        className="fixed left-4 top-4 z-50 flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/30 bg-white shadow-xl shadow-black/10 md:hidden"
+      >
+        <img src={logo} alt="Tree Clarence logo" className="h-full w-full object-cover scale-125" />
+      </a>
+
+      <header className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 md:bottom-auto md:top-9">
+        <div className="flex items-center gap-3">
+          <a
+            href="/#top"
+            aria-label="Tree Clarence home"
+            className="hidden h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/30 bg-white shadow-xl shadow-black/10 md:flex"
+          >
+            <img src={logo} alt="Tree Clarence logo" className="h-full w-full object-cover scale-125" />
+          </a>
+          <div
+              className="nav-frame relative"
+              style={{ "--nav-index": activeIndex } as CSSProperties}
+            >
+              <nav className="nav-notch flex items-end rounded-full border border-border/30 bg-card/40 px-2 shadow-xl shadow-black/10 backdrop-blur-xl">
+                {NAV_ITEMS.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = active === item.id;
+                  return (
+                    <a
+                      key={item.id}
+                      href={`#${item.id}`}
+                      onClick={() => setActive(item.id)}
+                      aria-current={isActive ? "page" : undefined}
+                      className="relative flex h-16 w-16 flex-col items-center justify-end pb-2 md:w-28"
+                    >
+                      <span
+                        className={cn(
+                          "mb-1 text-muted-foreground transition-opacity duration-300",
+                          isActive && "opacity-0",
+                        )}
+                      >
+                        <Icon className="h-5 w-5" strokeWidth={1.7} />
+                      </span>
+                      <span
+                        className={cn(
+                          "text-[11px] tracking-wide transition-colors duration-300",
+                          isActive ? "font-semibold text-foreground" : "text-muted-foreground",
+                        )}
+                      >
+                        {item.label}
+                      </span>
+                    </a>
+                  );
+                })}
+              </nav>
+              <span className="nav-bubble pointer-events-none absolute top-0 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-border/30 bg-card/50 text-foreground shadow-lg shadow-black/20 backdrop-blur-xl">
+                <ActiveIcon className="h-5 w-5" strokeWidth={2.2} />
+              </span>
+            </div>
+            <ThemeToggle />
+          </div>
+        </header>
+    </>
   );
 }

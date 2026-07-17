@@ -5,6 +5,7 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { imagetools } from "vite-imagetools";
 
 // `npm run build:firebase` sets FIREBASE_BUILD=1 to produce a fully prerendered static
 // site in dist/client for Firebase Hosting. Normal builds keep the default
@@ -19,5 +20,8 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
     ...(firebaseBuild ? { prerender: { enabled: true, crawlLinks: true } } : {}),
+  },
+  vite: {
+    plugins: [imagetools()],
   },
 });

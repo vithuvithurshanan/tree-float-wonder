@@ -13,6 +13,9 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 
+const FONTS_CSS_HREF =
+  "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fira+Sans:wght@300;400;500;600;700&display=swap";
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -95,7 +98,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fira+Sans:wght@300;400;500;600;700&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -114,6 +116,16 @@ function RootShell({ children }: { children: ReactNode }) {
             __html: `(function(){try{var t=localStorage.getItem("theme");document.documentElement.classList.toggle("dark",t!=="light")}catch(e){document.documentElement.classList.add("dark")}})()`,
           }}
         />
+        {/* Load Google Fonts without blocking initial render: fetch as a print
+            stylesheet (non-blocking) then swap to "all" once it's loaded. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var l=document.createElement("link");l.rel="stylesheet";l.href=${JSON.stringify(FONTS_CSS_HREF)};l.media="print";l.onload=function(){this.media="all"};document.head.appendChild(l)})()`,
+          }}
+        />
+        <noscript>
+          <link rel="stylesheet" href={FONTS_CSS_HREF} />
+        </noscript>
       </head>
       <body>
         {children}
