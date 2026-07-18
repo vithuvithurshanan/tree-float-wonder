@@ -7,8 +7,9 @@ import { GHLContactForm } from "@/components/GHLContactForm";
 const heroTree = "/tree-hero.jpg";
 import midMountains from "@/assets/tree-mid.png?w=1920&format=webp&quality=80&url";
 import midMountainsSmall from "@/assets/tree-mid.png?w=960&format=webp&quality=75&url";
-import foreGrass from "@/assets/tree-fore.png?w=1920&format=webp&quality=80&url";
-import foreGrassSmall from "@/assets/tree-fore.png?w=960&format=webp&quality=75&url";
+import foreGrass from "@/assets/tree-fore.png?w=1920&format=webp&quality=70&url";
+import foreGrassMedium from "@/assets/tree-fore.png?w=960&format=webp&quality=60&url";
+import foreGrassSmall from "@/assets/tree-fore.png?w=640&format=webp&quality=55&url";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -124,7 +125,7 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
       {/* Foreground grass */}
       <motion.img
         src={foreGrass}
-        srcSet={`${foreGrassSmall} 960w, ${foreGrass} 1920w`}
+        srcSet={`${foreGrassSmall} 640w, ${foreGrassMedium} 960w, ${foreGrass} 1920w`}
         sizes="100vw"
         alt=""
         aria-hidden
@@ -365,10 +366,10 @@ function AboutSection() {
 
 const galleryImages = [
   { src: heroTree, title: "Tree Care Excellence", span: "col-span-1 md:col-span-2 row-span-2" },
-  { src: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Precision Trimming", span: "col-span-1" },
-  { src: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Safe Removal", span: "col-span-1" },
-  { src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Stump Grinding", span: "col-span-1" },
-  { src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=75&fm=webp", title: "Emergency Response", span: "col-span-1 md:col-span-2" },
+  { src: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=50&fm=webp", title: "Precision Trimming", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=50&fm=webp", title: "Safe Removal", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=50&fm=webp", title: "Stump Grinding", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=50&fm=webp", title: "Emergency Response", span: "col-span-1 md:col-span-2" },
 ];
 
 function GallerySection() {

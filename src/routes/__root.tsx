@@ -134,22 +134,18 @@ function RootShell({ children }: { children: ReactNode }) {
             __html: `(function(){try{var t=localStorage.getItem("theme");document.documentElement.classList.toggle("dark",t!=="light")}catch(e){document.documentElement.classList.add("dark")}})()`,
           }}
         />
-        {/* Full stylesheet loaded non-blocking (print→all swap).
-            Tailwind utility classes that aren't needed before first paint
-            are deferred this way, removing it from the critical path. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){var l=document.createElement("link");l.rel="stylesheet";l.href=${JSON.stringify(appCss)};l.media="print";l.onload=function(){this.media="all"};document.head.appendChild(l)})()`,
-          }}
-        />
-        {/* Google Fonts — also non-blocking */}
+        {/* Full Tailwind stylesheet — blocking so utility classes are available before
+            first paint. This prevents layout shift from Tailwind utilities applying
+            after the page is already visible. Critical CSS above handles base styles
+            so the blocking wait is minimal (browser may have it cached). */}
+        <link rel="stylesheet" href={appCss} />
+        {/* Google Fonts — non-blocking, not on critical path */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var l=document.createElement("link");l.rel="stylesheet";l.href=${JSON.stringify(FONTS_CSS_HREF)};l.media="print";l.onload=function(){this.media="all"};document.head.appendChild(l)})()`,
           }}
         />
         <noscript>
-          <link rel="stylesheet" href={appCss} />
           <link rel="stylesheet" href={FONTS_CSS_HREF} />
         </noscript>
       </head>

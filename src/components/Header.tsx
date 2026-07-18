@@ -12,11 +12,14 @@ const NAV_ITEMS = [
 ];
 
 function ThemeToggle() {
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-
-  useEffect(() => {
-    setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
-  }, []);
+  // Read the theme synchronously from the DOM (set by the inline script in __root.tsx)
+  // so the correct icon renders on first paint with no hydration shift.
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof document !== "undefined") {
+      return document.documentElement.classList.contains("dark") ? "dark" : "light";
+    }
+    return "dark"; // SSR default matches the inline script default
+  });
 
   const toggle = () => {
     const next = theme === "dark" ? "light" : "dark";
@@ -75,7 +78,7 @@ export function Header() {
         aria-label="Tree Clarence home"
         className="fixed left-4 top-4 z-50 flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/30 bg-white shadow-xl shadow-black/10 md:hidden"
       >
-        <img src={logo} alt="Tree Clarence logo" className="h-full w-full object-cover scale-125" />
+        <img src={logo} alt="Tree Clarence logo" width={48} height={48} className="h-full w-full object-cover scale-125" />
       </a>
 
       <header className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 md:bottom-auto md:top-9">
@@ -85,7 +88,7 @@ export function Header() {
             aria-label="Tree Clarence home"
             className="hidden h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/30 bg-white shadow-xl shadow-black/10 md:flex"
           >
-            <img src={logo} alt="Tree Clarence logo" className="h-full w-full object-cover scale-125" />
+            <img src={logo} alt="Tree Clarence logo" width={48} height={48} className="h-full w-full object-cover scale-125" />
           </a>
           <div
               className="nav-frame relative"
