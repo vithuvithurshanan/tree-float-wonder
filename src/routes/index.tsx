@@ -365,9 +365,9 @@ function AboutSection() {
 
 const galleryImages = [
   { src: heroTree, title: "Tree Care Excellence", span: "col-span-1 md:col-span-2 row-span-2" },
-  { src: "https://images.unsplash.com/photo-1593007622835-188cc06da0ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Precision Trimming", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Precision Trimming", span: "col-span-1" },
   { src: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Safe Removal", span: "col-span-1" },
-  { src: "https://images.unsplash.com/photo-1588693895085-f5e976693a12?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Stump Grinding", span: "col-span-1" },
+  { src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=75&fm=webp", title: "Stump Grinding", span: "col-span-1" },
   { src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=75&fm=webp", title: "Emergency Response", span: "col-span-1 md:col-span-2" },
 ];
 

@@ -39,7 +39,12 @@ export function GHLContactForm() {
         data-height="891"
         data-layout-iframe-id="inline-PfCYLIwBwBPyLIV9h4Gl"
         data-form-id="PfCYLIwBwBPyLIV9h4Gl"
-        title="Form 0"
+        title="Contact form"
+        // allow-storage-access-by-user-activation lets the iframe request
+        // first-party storage access when the user interacts, which is the
+        // correct modern pattern instead of relying on third-party cookies.
+        sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-storage-access-by-user-activation"
+        loading="lazy"
         onLoad={() => setLoaded(true)}
       />
 
