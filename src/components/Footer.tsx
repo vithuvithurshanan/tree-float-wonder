@@ -1,5 +1,6 @@
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
-import logo from "@/assets/logo.png";
+// Rendered at 56px; serve a properly downsized webp instead of the raw 465 KB PNG.
+import logo from "@/assets/logo.png?w=112&format=webp&quality=65&url";
 
 const QUICK_LINKS = [
   { href: "/#top", label: "Home" },
@@ -16,6 +17,10 @@ const SERVICES = [
   "24/7 Emergency Tree Service",
 ];
 
+// Minimum 44×44 px touch target per WCAG 2.5.5.
+// Applied to all footer links as inline-flex with min height.
+const linkCls = "inline-flex items-center min-h-[44px] py-1 transition-colors hover:text-foreground";
+
 export function Footer() {
   return (
     <footer className="border-t border-primary/20 bg-gradient-to-b from-card/40 to-card/80 px-6 md:px-12 pt-16 pb-28 md:pb-10 text-sm text-muted-foreground">
@@ -27,6 +32,8 @@ export function Footer() {
               <img
                 src={logo}
                 alt="Tree Clarence logo"
+                width={56}
+                height={56}
                 className="h-14 w-14 shrink-0 rounded-2xl bg-white object-cover"
               />
               Tree Clarence
@@ -40,10 +47,10 @@ export function Footer() {
           {/* Quick links */}
           <div>
             <h3 className="mb-4 font-display text-base text-foreground">Quick Links</h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-0">
               {QUICK_LINKS.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className="transition-colors hover:text-foreground">
+                  <a href={link.href} className={linkCls}>
                     {link.label}
                   </a>
                 </li>
@@ -54,10 +61,10 @@ export function Footer() {
           {/* Services */}
           <div>
             <h3 className="mb-4 font-display text-base text-foreground">Our Services</h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-0">
               {SERVICES.map((service) => (
                 <li key={service}>
-                  <a href="/#services" className="transition-colors hover:text-foreground">
+                  <a href="/#services" className={linkCls}>
                     {service}
                   </a>
                 </li>
@@ -68,32 +75,32 @@ export function Footer() {
           {/* Contact */}
           <div>
             <h3 className="mb-4 font-display text-base text-foreground">Contact</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <a href="tel:7167108864" className="transition-colors hover:text-foreground">
+            <ul className="space-y-0">
+              <li className="flex items-center gap-3 min-h-[44px]">
+                <Phone className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                <a href="tel:7167108864" className={linkCls}>
                   716-710-8864
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <li className="flex items-center gap-3 min-h-[44px]">
+                <Mail className="h-4 w-4 shrink-0 text-primary" aria-hidden />
                 <a
                   href="mailto:kdassociatebfinc@gmail.com"
-                  className="break-all transition-colors hover:text-foreground"
+                  className={`break-all ${linkCls}`}
                 >
                   kdassociatebfinc@gmail.com
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <li className="flex items-start gap-3 py-2">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
                 <address className="not-italic">
                   9950 County Rd
                   <br />
                   Clarence Center, NY 14032
                 </address>
               </li>
-              <li className="flex items-start gap-3">
-                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <li className="flex items-start gap-3 py-2">
+                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
                 <span>
                   Mon – Sat: 7:00 AM – 7:00 PM
                   <br />
@@ -108,10 +115,10 @@ export function Footer() {
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-border/50 pt-8 md:flex-row">
           <span>© {new Date().getFullYear()} Tree Clarence · KD Associates Buffalo INC. All rights reserved.</span>
           <div className="flex gap-6">
-            <a href="/privacy-policy" className="transition-colors hover:text-foreground">
+            <a href="/privacy-policy" className={linkCls}>
               Privacy Policy
             </a>
-            <a href="/terms" className="transition-colors hover:text-foreground">
+            <a href="/terms" className={linkCls}>
               Terms of Service
             </a>
           </div>

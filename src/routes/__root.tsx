@@ -16,16 +16,37 @@ import { Toaster } from "@/components/ui/sonner";
 const FONTS_CSS_HREF =
   "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fira+Sans:wght@300;400;500;600;700&display=swap";
 
-// Critical CSS inlined into the HTML shell so the browser can paint immediately
-// without waiting for the stylesheet network round-trip (~330 ms saved).
-// Covers: CSS custom properties, body defaults, hero background, and the dark-mode
-// toggle so there is no flash of unstyled / wrong-theme content.
+// Critical CSS inlined into the HTML shell — two parts:
+// 1. Design tokens + base styles (vars, body, headings)
+// 2. Above-fold Tailwind utilities for the hero section, so layout is correct
+//    before the full stylesheet loads non-blocking (avoids CLS on first paint).
 const CRITICAL_CSS = `
-:root{--radius:1rem;--background:oklch(0.97 0.015 130);--foreground:oklch(0.25 0.04 150);--card:oklch(0.995 0.005 130);--card-foreground:oklch(0.25 0.04 150);--primary:oklch(0.45 0.09 148);--primary-foreground:oklch(0.97 0.02 130);--secondary:oklch(0.92 0.03 140);--secondary-foreground:oklch(0.28 0.05 148);--muted:oklch(0.93 0.02 140);--muted-foreground:oklch(0.45 0.03 148);--accent:oklch(0.60 0.11 142);--accent-foreground:oklch(0.98 0.01 130);--border:oklch(0.87 0.02 140);--ring:oklch(0.45 0.09 148);--destructive:oklch(0.55 0.19 25);--color-background:var(--background);--color-foreground:var(--foreground);--color-card:var(--card);--color-primary:var(--primary);--color-border:var(--border);--font-display:"DM Serif Display",Georgia,serif;--font-sans:"Fira Sans",system-ui,sans-serif;}
+:root{--radius:1rem;--background:oklch(0.97 0.015 130);--foreground:oklch(0.25 0.04 150);--card:oklch(0.995 0.005 130);--card-foreground:oklch(0.25 0.04 150);--primary:oklch(0.45 0.09 148);--primary-foreground:oklch(0.97 0.02 130);--secondary:oklch(0.92 0.03 140);--secondary-foreground:oklch(0.28 0.05 148);--muted:oklch(0.93 0.02 140);--muted-foreground:oklch(0.45 0.03 148);--accent:oklch(0.60 0.11 142);--accent-foreground:oklch(0.98 0.01 130);--border:oklch(0.87 0.02 140);--ring:oklch(0.45 0.09 148);--destructive:oklch(0.55 0.19 25);--color-background:var(--background);--color-foreground:var(--foreground);--color-card:var(--card);--color-card-foreground:var(--card-foreground);--color-primary:var(--primary);--color-primary-foreground:var(--primary-foreground);--color-secondary:var(--secondary);--color-secondary-foreground:var(--secondary-foreground);--color-muted:var(--muted);--color-muted-foreground:var(--muted-foreground);--color-accent:var(--accent);--color-accent-foreground:var(--accent-foreground);--color-border:var(--border);--color-ring:var(--ring);--font-display:"DM Serif Display",Georgia,serif;--font-sans:"Fira Sans",system-ui,sans-serif;--radius-sm:calc(var(--radius) - 4px);--radius-md:calc(var(--radius) - 2px);--radius-lg:var(--radius);--radius-xl:calc(var(--radius) + 4px);}
 .dark{--background:oklch(0.34 0.032 148);--foreground:oklch(0.97 0.015 130);--card:oklch(0.40 0.038 148);--card-foreground:oklch(0.97 0.015 130);--primary:oklch(0.85 0.08 140);--primary-foreground:oklch(0.28 0.04 150);--secondary:oklch(0.47 0.04 148);--secondary-foreground:oklch(0.97 0.015 130);--muted:oklch(0.41 0.032 148);--muted-foreground:oklch(0.84 0.03 140);--accent:oklch(0.68 0.10 142);--accent-foreground:oklch(0.22 0.04 150);--border:oklch(0.50 0.038 148);--ring:oklch(0.85 0.08 140);--destructive:oklch(0.66 0.18 25);}
-*{border-color:var(--color-border);}
-body{background-color:var(--color-background);color:var(--color-foreground);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;}
+*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:var(--color-border);}
+*{margin:0;padding:0;}
+html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:var(--font-sans);}
+body{background-color:var(--color-background);color:var(--color-foreground);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;line-height:inherit;}
 h1,h2,h3{font-family:var(--font-display);letter-spacing:-0.01em;}
+img,video{max-width:100%;height:auto;display:block;}
+/* Above-fold layout utilities — hero section */
+.relative{position:relative}.absolute{position:absolute}.fixed{position:fixed}.inset-0{inset:0}.inset-x-0{left:0;right:0}
+.overflow-hidden{overflow:hidden}.overflow-x-hidden{overflow-x:hidden}
+.h-\\[100vh\\]{height:100vh}.h-full{height:100%}.h-\\[110\\%\\]{height:110%}.w-full{width:100%}.w-auto{width:auto}.w-\\[130\\%\\]{width:130%}
+.max-w-none{max-width:none}
+.bottom-0{bottom:0}.bottom-4{bottom:1rem}.bottom-\\[-40px\\]{bottom:-40px}.left-0{left:0}.left-4{left:1rem}.left-1\\/2{left:50%}.top-0{top:0}.top-4{top:1rem}.top-9{top:2.25rem}.z-10{z-index:10}.z-20{z-index:20}.z-50{z-index:50}
+.flex{display:flex}.hidden{display:none}.items-center{align-items:center}.justify-center{justify-content:center}.flex-col{flex-direction:column}
+.px-4{padding-left:1rem;padding-right:1rem}
+.select-none{user-select:none}.pointer-events-none{pointer-events:none}
+.-translate-x-1\\/2{transform:translateX(-50%)}.-ml-\\[15\\%\\]{margin-left:-15%}
+.object-cover{object-fit:cover}.object-bottom{object-position:bottom}
+.text-center{text-align:center}.px-6{padding-left:1.5rem;padding-right:1.5rem}
+.opacity-90{opacity:0.9}
+/* bg-sky-gradient utility — hero background color, critical to avoid flash */
+.bg-sky-gradient{background:linear-gradient(180deg,oklch(0.30 0.05 200) 0%,oklch(0.45 0.08 160) 45%,oklch(0.65 0.11 142) 100%);}
+/* nav-frame — fixed header positioning */
+.nav-frame{--nav-item-w:4rem;--nav-pad-x:0.5rem;--notch-x:calc(var(--nav-pad-x) + (var(--nav-index,0) + 0.5) * var(--nav-item-w));transition:--notch-x 0.45s cubic-bezier(0.34,1.56,0.64,1);}
+@media(min-width:768px){.nav-frame{--nav-item-w:7rem;}.md\\:flex{display:flex;}.md\\:hidden{display:none;}.md\\:bottom-auto{bottom:auto;}}
 `;
 
 function NotFoundComponent() {
@@ -110,8 +131,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       // and the duplicate (lacking fetchpriority) was winning the priority race.
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
-      // link.kdlead.com hosts the GHL form iframe and its embed script: preconnecting
-      // here saves ~310 ms on LCP according to Lighthouse.
       { rel: "preconnect", href: "https://link.kdlead.com" },
     ],
   }),
@@ -126,7 +145,8 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
-        {/* Critical CSS inlined — eliminates the render-blocking stylesheet round-trip */}
+        {/* Critical CSS inlined — covers design tokens + above-fold hero layout.
+            The full Tailwind sheet loads non-blocking so it never delays first paint. */}
         <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />
         {/* Theme toggle runs before paint to avoid flash of wrong theme */}
         <script
@@ -134,18 +154,22 @@ function RootShell({ children }: { children: ReactNode }) {
             __html: `(function(){try{var t=localStorage.getItem("theme");document.documentElement.classList.toggle("dark",t!=="light")}catch(e){document.documentElement.classList.add("dark")}})()`,
           }}
         />
-        {/* Full Tailwind stylesheet — blocking so utility classes are available before
-            first paint. This prevents layout shift from Tailwind utilities applying
-            after the page is already visible. Critical CSS above handles base styles
-            so the blocking wait is minimal (browser may have it cached). */}
-        <link rel="stylesheet" href={appCss} />
-        {/* Google Fonts — non-blocking, not on critical path */}
+        {/* Full Tailwind stylesheet — non-blocking (print→all swap).
+            Critical CSS above covers everything needed for first paint, so deferring
+            this sheet cannot cause layout shift. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var l=document.createElement("link");l.rel="stylesheet";l.href=${JSON.stringify(appCss)};l.media="print";l.onload=function(){this.media="all"};document.head.appendChild(l)})()`,
+          }}
+        />
+        {/* Google Fonts — also non-blocking */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var l=document.createElement("link");l.rel="stylesheet";l.href=${JSON.stringify(FONTS_CSS_HREF)};l.media="print";l.onload=function(){this.media="all"};document.head.appendChild(l)})()`,
           }}
         />
         <noscript>
+          <link rel="stylesheet" href={appCss} />
           <link rel="stylesheet" href={FONTS_CSS_HREF} />
         </noscript>
       </head>

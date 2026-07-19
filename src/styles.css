@@ -189,6 +189,21 @@
   animation: glass-fly 6s ease-in-out infinite;
 }
 
+/* Hero floating-leaf particles — compositor-driven CSS animation (transform/opacity
+   only) instead of framer-motion, since 25 concurrently JS-animated particles was a
+   major main-thread cost. Per-particle duration/delay/sway come from inline styles. */
+@keyframes leaf-fall {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  50% { transform: translate3d(var(--leaf-sway, 30px), 60vh, 0) rotate(360deg); opacity: 0.85; }
+  92% { opacity: 0.8; }
+  100% { transform: translate3d(calc(var(--leaf-sway, 30px) * -0.6), 120vh, 0) rotate(720deg); opacity: 0; }
+}
+@utility animate-leaf-fall {
+  animation: leaf-fall linear infinite;
+  will-change: transform, opacity;
+}
+
 @utility spring-hover {
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   &:hover { transform: translateY(-6px) scale(1.03) rotate(-0.5deg); }
@@ -197,3 +212,36 @@
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   &:hover { transform: rotate(-1.5deg) scale(1.02); }
 }
+
+/* Scroll-reveal animations — used by useInView hook in index.tsx as a
+   lightweight alternative to framer-motion whileInView for below-fold sections. */
+.fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-left {
+  opacity: 0;
+  transform: translateX(-32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-left.in-view {
+  opacity: 1;
+  transform: translateX(0);
+}
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.fade-in.in-view {
+  opacity: 1;
+}
+/* Staggered children — add delay via inline style or these helpers */
+.stagger-1 { transition-delay: 0.1s; }
+.stagger-2 { transition-delay: 0.2s; }
+.stagger-3 { transition-delay: 0.3s; }
+.stagger-4 { transition-delay: 0.4s; }

@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { GHLContactForm } from "@/components/GHLContactForm";
+
+const GHLContactForm = lazy(() =>
+  import("@/components/GHLContactForm").then((m) => ({ default: m.GHLContactForm }))
+);
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
@@ -85,7 +89,11 @@ function ContactPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="bg-card border border-border rounded-3xl p-4 md:p-6 shadow-sm"
             >
-              <GHLContactForm />
+              <Suspense fallback={
+                <div className="w-full rounded-xl bg-card/40 animate-pulse" style={{ height: 891 }} aria-label="Loading contact form…" />
+              }>
+                <GHLContactForm />
+              </Suspense>
             </motion.div>
           </div>
         </div>

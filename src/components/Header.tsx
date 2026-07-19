@@ -1,7 +1,8 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { Home, Image, Mail, Moon, Sun, TreePine, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/logo.png";
+// Rendered at 48-56px; serve a properly downsized webp instead of the raw 465 KB PNG.
+import logo from "@/assets/logo.png?w=112&format=webp&quality=65&url";
 
 const NAV_ITEMS = [
   { id: "top", label: "Home", icon: Home },

@@ -16,12 +16,25 @@ const firebaseBuild = !!process.env.FIREBASE_BUILD;
 export default defineConfig({
   nitro: firebaseBuild ? false : undefined,
   tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
     server: { entry: "server" },
     ...(firebaseBuild ? { prerender: { enabled: true, crawlLinks: true } } : {}),
   },
   vite: {
     plugins: [imagetools()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            // framer-motion is large (~50 KiB gzipped) — isolate it so it's
+            // cached independently and only blocks routes that need it.
+            if (id.includes("node_modules/framer-motion")) return "framer-motion";
+            // Radix UI primitives are shared across many routes — one cache entry.
+            if (id.includes("node_modules/@radix-ui")) return "radix-ui";
+            // React core — tiny but useful to split for long-term caching.
+            if (id.includes("node_modules/react-dom") || id.includes("node_modules/react/")) return "react";
+          },
+        },
+      },
+    },
   },
 });
