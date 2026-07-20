@@ -131,7 +131,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       // and the duplicate (lacking fetchpriority) was winning the priority race.
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "canonical", href: "https://tree-clarence.web.app/" },
       { rel: "preconnect", href: "https://link.kdlead.com" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
     ],
   }),
   shellComponent: RootShell,

@@ -2,6 +2,21 @@
 @source "../src";
 @import "tw-animate-css";
 
+/* Belt-and-suspenders font-display overrides. The Google Fonts URL already
+   requests display=swap, but these @font-face rules ensure the browser never
+   shows invisible text (FOIT) while the woff2 files are in-flight, which
+   Lighthouse flags as an FCP/LCP opportunity. */
+@font-face {
+  font-family: 'DM Serif Display';
+  font-display: swap;
+  src: local('DM Serif Display');
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-display: swap;
+  src: local('Fira Sans');
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -245,3 +260,56 @@
 .stagger-2 { transition-delay: 0.2s; }
 .stagger-3 { transition-delay: 0.3s; }
 .stagger-4 { transition-delay: 0.4s; }
+
+/* CSS scroll-driven parallax — replaces framer-motion useScroll/useTransform.
+   Runs entirely on the compositor thread: zero JS scroll listeners, zero forced reflows.
+   animation-timeline: scroll() is Baseline 2024 (~90% support).
+   Browsers that don't support it simply show the elements without parallax. */
+@supports (animation-timeline: scroll()) {
+  @keyframes parallax-bg-kf {
+    from { transform: translateY(0); }
+    to   { transform: translateY(150px); }
+  }
+  @keyframes parallax-mid-kf {
+    from { transform: translateY(0); }
+    to   { transform: translateY(350px); }
+  }
+  @keyframes parallax-tree-kf {
+    from { transform: translateX(-50%) translateY(0); }
+    to   { transform: translateX(-50%) translateY(500px); }
+  }
+  @keyframes parallax-fore-kf {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-150px); }
+  }
+  @keyframes parallax-text-kf {
+    from { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(250px); opacity: 0; }
+  }
+
+  .parallax-bg {
+    animation: parallax-bg-kf linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+  }
+  .parallax-mid {
+    animation: parallax-mid-kf linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+  }
+  .parallax-tree {
+    animation: parallax-tree-kf linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+  }
+  .parallax-fore {
+    animation: parallax-fore-kf linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+  }
+  .parallax-text {
+    animation: parallax-text-kf linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 60vh;
+  }
+}

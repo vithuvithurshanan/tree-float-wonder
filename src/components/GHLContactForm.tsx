@@ -40,10 +40,12 @@ export function GHLContactForm() {
         data-layout-iframe-id="inline-PfCYLIwBwBPyLIV9h4Gl"
         data-form-id="PfCYLIwBwBPyLIV9h4Gl"
         title="Contact form"
-        // allow-storage-access-by-user-activation lets the iframe request
-        // first-party storage access when the user interacts, which is the
-        // correct modern pattern instead of relying on third-party cookies.
+        // allow-storage-access-by-user-activation (sandbox) plus allow="storage-access"
+        // (Permissions-Policy) are both required for the Storage Access API — the sandbox
+        // flag alone isn't enough to let the iframe (and its nested reCAPTCHA frame) call
+        // document.requestStorageAccess() successfully once third-party cookies are blocked.
         sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-storage-access-by-user-activation"
+        allow="storage-access"
         loading="lazy"
         onLoad={() => setLoaded(true)}
       />

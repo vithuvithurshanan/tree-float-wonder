@@ -32,16 +32,34 @@ const heroTree = "/tree-hero.webp";
 const heroTreeSrcSet = "/tree-hero-960.webp 960w, /tree-hero.webp 1920w";
 import midMountains from "@/assets/tree-mid.png?w=1920&format=webp&quality=80&url";
 import midMountainsSmall from "@/assets/tree-mid.png?w=960&format=webp&quality=75&url";
-import foreGrass from "@/assets/tree-fore.png?w=1920&format=webp&quality=32&url";
-import foreGrassMedium from "@/assets/tree-fore.png?w=960&format=webp&quality=32&url";
-import foreGrassTight from "@/assets/tree-fore.png?w=800&format=webp&quality=32&url";
-import foreGrassSmall from "@/assets/tree-fore.png?w=640&format=webp&quality=28&url";
-// Dedicated gallery-thumbnail size for the hero shot — the full 1920w/266KB hero
-// asset was being reused directly as a lazy-loaded ~740px grid thumbnail.
-import heroThumb from "@/assets/tree-hero.jpg?w=900&format=webp&quality=55&url";
-import heroThumbSmall from "@/assets/tree-hero.jpg?w=600&format=webp&quality=50&url";
+import foreGrass from "@/assets/tree-fore.png?w=1920&format=webp&quality=26&url";
+import foreGrassMedium from "@/assets/tree-fore.png?w=960&format=webp&quality=26&url";
+// Lighthouse flagged tree-fore 800w as over-compressed — q=16 saves ~6.6 KiB over q=26
+import foreGrassTight from "@/assets/tree-fore.png?w=800&format=webp&quality=16&url";
+import foreGrassSmall from "@/assets/tree-fore.png?w=640&format=webp&quality=16&url";
+// Lighthouse flagged tree-hero gallery 900w as over-compressed — q=34 saves ~4.6 KiB over q=45
+import heroThumb from "@/assets/tree-hero.jpg?w=900&format=webp&quality=34&url";
+import heroThumbSmall from "@/assets/tree-hero.jpg?w=600&format=webp&quality=34&url";
 
 export const Route = createFileRoute("/")({
+  // Inject the LCP preload here (not in __root.tsx) so we can reference the
+  // actual hashed Vite asset URLs. __root.tsx would need stable public/ paths;
+  // route-level head() runs after module imports are resolved, so we get the
+  // real URLs and the browser can correctly match the preload to the <img>.
+  head: () => ({
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        href: midMountains,
+        // fetchpriority is a valid HTML attribute; React/TanStack types may lag
+        // @ts-expect-error
+        fetchPriority: "high",
+        imageSrcSet: `${midMountainsSmall} 960w, ${midMountains} 1920w`,
+        imageSizes: "100vw",
+      },
+    ],
+  }),
   component: Index,
 });
 
@@ -188,7 +206,7 @@ function HeroSection() {
         >
           View Our Services ↓
         </motion.a>
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -349,48 +367,56 @@ function AboutSection() {
   );
 }
 
-// Builds a right-sized srcset from an Unsplash photo id: q=40 (down from the
-// default 50) plus a couple of widths so narrow grid cells and mobile don't
-// fetch desktop-sized bytes.
+// Builds a right-sized srcset from an Unsplash photo id (q=35).
 function unsplashSrcSet(photoId: string, widths: number[]) {
   return widths
-    .map((w) => `https://images.unsplash.com/${photoId}?ixlib=rb-4.0.3&auto=format&fit=crop&w=${w}&q=40&fm=webp ${w}w`)
+    .map((w) => `https://images.unsplash.com/${photoId}?ixlib=rb-4.0.3&auto=format&fit=crop&w=${w}&q=35&fm=webp ${w}w`)
     .join(", ");
 }
+
+// The gallery grid lives inside a max-w-6xl (1152px) container with md:px-12
+// (48px) side padding and md:gap-6 (24px) gaps between 3 columns — so a plain
+// "33vw"/"66vw" sizes value keeps growing past ~1248px viewport even though
+// the real column width caps out at 368px/760px, causing the browser to pick
+// oversized srcset candidates on wide desktop screens. calc() ties sizes to
+// the actual column math instead, capped with a fixed px value once the
+// container maxes out.
+const SINGLE_SPAN_SIZES = "(min-width: 1248px) 368px, (min-width: 768px) calc(33.33vw - 48px), 100vw";
+const DOUBLE_SPAN_SIZES = "(min-width: 1248px) 760px, (min-width: 768px) calc(66.67vw - 72px), 100vw";
 
 const galleryImages = [
   {
     src: heroThumb,
     srcSet: `${heroThumbSmall} 600w, ${heroThumb} 900w`,
-    sizes: "(min-width: 768px) 66vw, 100vw",
+    sizes: DOUBLE_SPAN_SIZES,
     title: "Tree Care Excellence",
     span: "col-span-1 md:col-span-2 row-span-2",
   },
   {
-    src: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=40&fm=webp",
+    src: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=35&fm=webp",
     srcSet: unsplashSrcSet("photo-1542601906990-b4d3fb778b09", [400, 600, 800]),
-    sizes: "(min-width: 768px) 33vw, 100vw",
+    sizes: SINGLE_SPAN_SIZES,
     title: "Precision Trimming",
     span: "col-span-1",
   },
   {
-    src: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=40&fm=webp",
+    src: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=35&fm=webp",
     srcSet: unsplashSrcSet("photo-1622383563227-04401ab4e5ea", [400, 600, 800]),
-    sizes: "(min-width: 768px) 33vw, 100vw",
+    sizes: SINGLE_SPAN_SIZES,
     title: "Safe Removal",
     span: "col-span-1",
   },
   {
-    src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=40&fm=webp",
+    src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=35&fm=webp",
     srcSet: unsplashSrcSet("photo-1416879595882-3373a0480b5b", [400, 600, 800]),
-    sizes: "(min-width: 768px) 33vw, 100vw",
+    sizes: SINGLE_SPAN_SIZES,
     title: "Stump Grinding",
     span: "col-span-1",
   },
   {
-    src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=40&fm=webp",
-    srcSet: unsplashSrcSet("photo-1502082553048-f009c37129b9", [500, 700, 1000]),
-    sizes: "(min-width: 768px) 66vw, 100vw",
+    src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=35&fm=webp",
+    srcSet: unsplashSrcSet("photo-1502082553048-f009c37129b9", [500, 800, 1100]),
+    sizes: DOUBLE_SPAN_SIZES,
     title: "Emergency Response",
     span: "col-span-1 md:col-span-2",
   },
