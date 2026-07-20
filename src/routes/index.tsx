@@ -169,7 +169,7 @@ function HeroSection() {
         height={600}
         decoding="async"
         loading="eager"
-        className="parallax-fore absolute bottom-[-40px] left-0 w-[130%] -ml-[15%] select-none pointer-events-none"
+        className="parallax-tree absolute inset-0 h-full w-full object-cover object-bottom"
       />
 
       {/* Hero copy — entrance animations only (run once, no scroll reads) */}
