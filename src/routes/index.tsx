@@ -131,17 +131,18 @@ function HeroSection() {
 
       {/* Distant mountains */}
       <img
-        src={midMountains}
-        srcSet={`${midMountainsSmall} 960w, ${midMountains} 1920w`}
-        sizes="100vw"
-        alt=""
-        aria-hidden
-        width={1920}
-        height={1080}
-        decoding="async"
-        loading="eager"
-        className="parallax-mid absolute bottom-0 left-0 w-full select-none pointer-events-none opacity-90"
-      />
+  src={midMountains}
+  srcSet={`${midMountainsSmall} 960w, ${midMountains} 1920w`}
+  sizes="100vw"
+  alt=""
+  aria-hidden
+  width={1920}
+  height={1080}
+  decoding="async"
+  loading="eager"
+  fetchPriority="high"
+  className="parallax-mid absolute bottom-0 left-0 w-full select-none pointer-events-none opacity-90"
+/>
 
       {/* Hero tree — LCP image */}
       <img
