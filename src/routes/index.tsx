@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties } from "react";
-import { motion } from "framer-motion";
+
 
 // Lazy-load the GHL contact form — it's below the fold and brings in ~34 KiB of
 // framer-motion + iframe code that shouldn't block the initial bundle parse.
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/")({
         as: "image",
         href: midMountains,
         // fetchpriority is a valid HTML attribute; React/TanStack types may lag
-        // @ts-expect-error
+        
         fetchPriority: "high",
         imageSrcSet: `${midMountainsSmall} 960w, ${midMountains} 1920w`,
         imageSizes: "100vw",
@@ -173,39 +173,21 @@ function HeroSection() {
 
       {/* Hero copy — entrance animations only (run once, no scroll reads) */}
       <div className="parallax-text relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2 }}
-          className="uppercase tracking-[0.4em] text-xs text-[oklch(0.88_0.08_140)] mb-6"
-        >
+        <p className="hero-fade-up hero-delay-1 uppercase tracking-[0.4em] text-xs text-[oklch(0.88_0.08_140)] mb-6">
           Quality Tree Services
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4 }}
-          className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] max-w-4xl text-[oklch(0.97_0.015_130)] drop-shadow-md"
-        >
+        </p>
+        <h1 className="hero-fade-up hero-delay-2 font-display text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] max-w-4xl text-[oklch(0.97_0.015_130)] drop-shadow-md">
           Buffalo's <span className="text-gradient-sun italic">Premier</span><br />Tree Experts.
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          className="mt-6 max-w-xl text-base md:text-lg text-[oklch(0.97_0.015_130)]/85 drop-shadow"
-        >
+        </h1>
+        <p className="hero-fade-up hero-delay-3 mt-6 max-w-xl text-base md:text-lg text-[oklch(0.97_0.015_130)]/85 drop-shadow">
           Locally owned and operated tree service company committed to the highest standards of care, safety, and customer satisfaction.
-        </motion.p>
-        <motion.a
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-          href="#services"
-          className="mt-10 rounded-full border border-white/40 bg-black/10 px-6 py-3 text-sm text-[oklch(0.97_0.015_130)] backdrop-blur-sm hover:bg-white/15 transition-colors"
-        >
+        </p>
+        <a
+  href="#services"
+  className="hero-pop-in hero-delay-4 mt-10 rounded-full border border-white/40 bg-black/10 px-6 py-3 text-sm text-[oklch(0.97_0.015_130)] backdrop-blur-sm hover:bg-white/15 transition-colors"
+>
           View Our Services ↓
-        </motion.a>
+        </a>
       </div>
     </section>
   );

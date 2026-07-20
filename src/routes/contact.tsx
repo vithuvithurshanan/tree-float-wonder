@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
-import { motion } from "framer-motion";
+
 
 const GHLContactForm = lazy(() =>
   import("@/components/GHLContactForm").then((m) => ({ default: m.GHLContactForm }))
@@ -15,12 +15,7 @@ function ContactPage() {
     <main className="relative min-h-screen bg-background text-foreground">
       <section className="relative py-32 px-6 md:px-12">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
+        <div className="fade-up in-view text-center mb-16">
             <p className="uppercase tracking-[0.4em] text-xs text-primary mb-4">Get In Touch</p>
             <h1 className="font-display text-4xl md:text-6xl font-semibold mb-6">
               Request a <span className="text-gradient-sun italic">Free Quote</span>
@@ -28,16 +23,11 @@ function ContactPage() {
             <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
               Ready to transform your property? Contact us today for a free, no-obligation estimate.
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-12 items-start">
             {/* Contact Info */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex flex-col gap-6"
-            >
+            <div className="fade-left in-view flex flex-col gap-6">
               <div className="flex gap-4 items-start bg-card/50 border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors">
                 <span className="text-3xl bg-primary/10 w-12 h-12 flex items-center justify-center rounded-xl shrink-0">
                   📞
@@ -80,21 +70,17 @@ function ContactPage() {
                   <p className="text-sm text-muted-foreground">Emergency: 24/7</p>
                 </div>
               </div>
-            </motion.div>
+        </div>
 
             {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-card border border-border rounded-3xl p-4 md:p-6 shadow-sm"
-            >
+           <div className="fade-up in-view bg-card border border-border rounded-3xl p-4 md:p-6 shadow-sm"
+style={{ transitionDelay: "0.2s" }}>
               <Suspense fallback={
                 <div className="w-full rounded-xl bg-card/40 animate-pulse" style={{ height: 891 }} aria-label="Loading contact form…" />
               }>
                 <GHLContactForm />
               </Suspense>
-            </motion.div>
+           </div>
           </div>
         </div>
       </section>

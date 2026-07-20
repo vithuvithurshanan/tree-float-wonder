@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+
 
 const contactSchema = z.object({
   name: z
@@ -69,11 +69,7 @@ export function ContactForm() {
 
   if (sent) {
     return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="mx-auto max-w-md rounded-2xl border border-primary/40 bg-primary/5 p-8 text-center"
-      >
+     <div className="contact-success-pop mx-auto max-w-md rounded-2xl border border-primary/40 bg-primary/5 p-8 text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M20 6 9 17l-5-5" />
@@ -90,7 +86,7 @@ export function ContactForm() {
         >
           Send another message
         </button>
-      </motion.div>
+      </div>
     );
   }
 

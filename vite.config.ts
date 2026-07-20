@@ -6,6 +6,7 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { imagetools } from "vite-imagetools";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // `npm run build:firebase` sets FIREBASE_BUILD=1 to produce a fully prerendered static
 // site in dist/client for Firebase Hosting. Normal builds keep the default
@@ -20,7 +21,15 @@ export default defineConfig({
     ...(firebaseBuild ? { prerender: { enabled: true, crawlLinks: true } } : {}),
   },
   vite: {
-    plugins: [imagetools()],
+    plugins: [
+  imagetools(),
+  visualizer({
+    filename: "dist/bundle-report.html",
+    open: true,
+    gzipSize: true,
+    brotliSize: true,
+  }),
+],
     build: {
       rollupOptions: {
         output: {
