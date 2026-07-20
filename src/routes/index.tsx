@@ -477,6 +477,7 @@ function ContactSection() {
   const heading = useInView();
   const left = useInView();
   const right = useInView();
+  const [showForm, setShowForm] = useState(false);
   return (
     <section id="contact" className="relative py-32 px-6 md:px-12 bg-card/20 border-t border-border/40 text-foreground">
       <div className="max-w-6xl mx-auto">
@@ -517,13 +518,43 @@ function ContactSection() {
             </div>
           </div>
 
-          <div ref={right.ref} className={`fade-in glass-green animate-glass-fly rounded-3xl p-4 md:p-6 ${right.visible ? "in-view" : ""}`} style={{ animationDelay: "0.4s", animationDuration: "8s" }}>
-            <Suspense fallback={
-              <div className="w-full rounded-xl bg-card/40 animate-pulse" style={{ height: 891 }} aria-label="Loading contact form…" />
-            }>
-              <GHLContactForm />
-            </Suspense>
-          </div>
+          <div
+  ref={right.ref}
+  className={`fade-in glass-green animate-glass-fly rounded-3xl p-4 md:p-6 ${right.visible ? "in-view" : ""}`}
+  style={{ animationDelay: "0.4s", animationDuration: "8s" }}
+>
+  {!showForm ? (
+    <div className="flex min-h-[520px] flex-col items-center justify-center px-8 text-center">
+      <h3 className="font-display text-3xl font-semibold">
+        Request Your Free Quote
+      </h3>
+
+      <p className="mt-4 max-w-md text-muted-foreground">
+        Click below to securely open the contact form.
+      </p>
+
+      <button
+        type="button"
+        onClick={() => setShowForm(true)}
+        className="mt-8 rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+      >
+        Open Contact Form
+      </button>
+    </div>
+  ) : (
+    <Suspense
+      fallback={
+        <div
+          className="w-full rounded-xl bg-card/40 animate-pulse"
+          style={{ height: 891 }}
+          aria-label="Loading contact form"
+        />
+      }
+    >
+      <GHLContactForm />
+    </Suspense>
+  )}
+</div>
         </div>
       </div>
     </section>
