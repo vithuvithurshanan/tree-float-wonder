@@ -145,18 +145,21 @@ function HeroSection() {
 />
 
       {/* Hero tree — LCP image */}
-      <img
-        src={heroTree}
-        srcSet={heroTreeSrcSet}
-        sizes="100vw"
-        alt="Ancient oak silhouette at sunrise"
-        width={1920}
-        height={1280}
-        decoding="async"
-        fetchPriority="high"
-        loading="eager"
-       className="parallax-tree absolute inset-0 h-full w-full object-cover object-bottom"
-      />
+     
+ <div className="absolute inset-0 overflow-hidden">
+  <img
+    src={heroTree}
+    srcSet={heroTreeSrcSet}
+    sizes="100vw"
+    alt="Ancient oak silhouette at sunrise"
+    width={1920}
+    height={1280}
+    decoding="async"
+    fetchPriority="high"
+    loading="eager"
+    className="parallax-tree absolute bottom-0 left-1/2 h-[110%] w-auto max-w-none -translate-x-1/2 object-cover object-bottom"
+  />
+</div>
 
       {/* Foreground grass */}
       <img
@@ -169,7 +172,7 @@ function HeroSection() {
         height={600}
         decoding="async"
         loading="eager"
-        className="parallax-tree absolute inset-0 h-full w-full object-cover object-bottom"
+        className="parallax-fore absolute bottom-[-40px] left-0 w-[130%] -ml-[15%] select-none pointer-events-none"
       />
 
       {/* Hero copy — entrance animations only (run once, no scroll reads) */}
