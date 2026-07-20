@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties } from "react";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 
 // Lazy-load the GHL contact form — it's below the fold and brings in ~34 KiB of
 // framer-motion + iframe code that shouldn't block the initial bundle parse.
@@ -89,28 +89,10 @@ function FloatingLeaves() {
   );
 }
 
-// Raw window.scrollY via a passive listener instead of framer-motion's useScroll(),
-// which measures document/container geometry (getBoundingClientRect, scrollHeight) on
-// every scroll tick to track progress we don't need — that read was showing up as a
-// forced reflow whenever it landed right after a layout-invalidating DOM change.
-function useRawScrollY() {
-  const scrollY = useMotionValue(0);
-  useEffect(() => {
-    const update = () => scrollY.set(window.scrollY);
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
-  }, [scrollY]);
-  return scrollY;
-}
-
 function Index() {
-  const scrollY = useRawScrollY();
-  const smoothScrollY = useSpring(scrollY, { damping: 25, stiffness: 120, mass: 0.2 });
-
   return (
     <main className="relative overflow-x-hidden bg-background text-foreground">
-      <HeroSection smoothScrollY={smoothScrollY} />
+      <HeroSection />
       <ServicesSection />
       <AboutSection />
       <GallerySection />
@@ -119,29 +101,18 @@ function Index() {
   );
 }
 
-function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
-  const yBg = useTransform(smoothScrollY, [0, 1000], [0, 150]);
-  const yMid = useTransform(smoothScrollY, [0, 1000], [0, 350]);
-  const yTree = useTransform(smoothScrollY, [0, 1000], [0, 500]);
-  const yFore = useTransform(smoothScrollY, [0, 1000], [0, -150]);
-  const yText = useTransform(smoothScrollY, [0, 1000], [0, 250]);
-  const opacityText = useTransform(smoothScrollY, [0, 600], [1, 0]);
-
+function HeroSection() {
   return (
     <section id="top" className="relative h-[100vh] w-full overflow-hidden bg-sky-gradient">
       <FloatingLeaves />
 
-      {/* Sky glow */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        style={{ y: yBg }}
-      >
+      {/* Sky glow — parallax via CSS scroll-driven animation */}
+      <div className="parallax-bg absolute inset-0 pointer-events-none">
         <div className="absolute left-1/2 top-[18%] -translate-x-1/2 h-[420px] w-[420px] rounded-full bg-primary/40 blur-3xl animate-float-slow" />
-      </motion.div>
+      </div>
 
-      {/* Distant mountains — LCP image. fetchPriority makes React's auto-generated
-          <link rel="preload"> (and the request itself) high priority. */}
-      <motion.img
+      {/* Distant mountains */}
+      <img
         src={midMountains}
         srcSet={`${midMountainsSmall} 960w, ${midMountains} 1920w`}
         sizes="100vw"
@@ -151,13 +122,11 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
         height={1080}
         decoding="async"
         loading="eager"
-        fetchPriority="high"
-        className="absolute bottom-0 left-0 w-full select-none pointer-events-none opacity-90"
-        style={{ y: yMid }}
+        className="parallax-mid absolute bottom-0 left-0 w-full select-none pointer-events-none opacity-90"
       />
 
-      {/* Hero tree */}
-      <motion.img
+      {/* Hero tree — LCP image */}
+      <img
         src={heroTree}
         srcSet={heroTreeSrcSet}
         sizes="100vw"
@@ -165,13 +134,13 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
         width={1920}
         height={1280}
         decoding="async"
+        fetchPriority="high"
         loading="eager"
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[110%] w-auto max-w-none object-cover object-bottom"
-        style={{ y: yTree, x: "-50%" }}
+        className="parallax-tree absolute bottom-0 left-1/2 -translate-x-1/2 h-[110%] w-auto max-w-none object-cover object-bottom"
       />
 
       {/* Foreground grass */}
-      <motion.img
+      <img
         src={foreGrass}
         srcSet={`${foreGrassSmall} 640w, ${foreGrassTight} 800w, ${foreGrassMedium} 960w, ${foreGrass} 1920w`}
         sizes="100vw"
@@ -181,15 +150,11 @@ function HeroSection({ smoothScrollY }: { smoothScrollY: any }) {
         height={600}
         decoding="async"
         loading="eager"
-        className="absolute bottom-[-40px] left-0 w-[130%] -ml-[15%] select-none pointer-events-none"
-        style={{ y: yFore }}
+        className="parallax-fore absolute bottom-[-40px] left-0 w-[130%] -ml-[15%] select-none pointer-events-none"
       />
 
-      {/* Hero copy */}
-      <motion.div
-        className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
-        style={{ y: yText, opacity: opacityText }}
-      >
+      {/* Hero copy — entrance animations only (run once, no scroll reads) */}
+      <div className="parallax-text relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

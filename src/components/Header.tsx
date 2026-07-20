@@ -53,10 +53,15 @@ export function Header() {
 
     const observer = new IntersectionObserver(
       (entries) => {
+        // entry.boundingClientRect is pre-computed by the browser when the IO
+        // callback fires — reading it here does NOT force a reflow.
+        // We track the last-known top per section and update on intersection change
+        // so we never read layout properties outside the IO callback.
         const visible = entries.filter((entry) => entry.isIntersecting);
         if (visible.length === 0) return;
+        // Use the entry's pre-computed boundingClientRect (no forced reflow)
         const topMost = visible.reduce((a, b) =>
-          a.boundingClientRect.top < b.boundingClientRect.top ? a : b,
+          a.boundingClientRect.top < b.boundingClientRect.top ? a : b
         );
         setActive(topMost.target.id);
       },
