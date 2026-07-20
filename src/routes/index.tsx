@@ -155,7 +155,7 @@ function HeroSection() {
         decoding="async"
         fetchPriority="high"
         loading="eager"
-       className="parallax-tree absolute bottom-0 left-1/2 -translate-x-1/2 h-full w-auto max-w-none object-cover object-bottom"
+       className="parallax-tree absolute inset-0 h-full w-full object-cover object-bottom"
       />
 
       {/* Foreground grass */}
